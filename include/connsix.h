@@ -67,8 +67,7 @@
 
 */
 char *
-lets_connect (char * ip, int port, char * color) ;
-
+lets_connect (char *ip, int port, char * color) ;
 /*	char * draw_and_read(char * draw):
 
 	Draw stones and read game state
@@ -143,8 +142,10 @@ draw_and_read (char * draw) ;
 char
 get_stone_at (char * position) ;
 
-
 typedef struct _position {
 	int x ;
 	int y ;
 } position_t ;
+
+void 
+canConnect6(position_t prevPosition[]);

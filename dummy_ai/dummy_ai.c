@@ -7,7 +7,7 @@
 
 char wbuf[10] ;	
 
-position_t prePosition[2] ;
+position_t prevPosition[2] = {{-1,-1},{-1,-1}};
 
 int
 main ()
@@ -48,23 +48,26 @@ main ()
 	srand(time(0x0)) ;
 
 	while (1) {
-		prePosition = canConnect6(prePosition); 
-		//  
-		if (prePosition[0].x != -1) {
-			hor1 = prePosition[0].x ;
-			ver1 = prePosition[0].y ;
-			hor2 = prePosition[1].x ;
-			ver2 = prePosition[1].y; 
+		canConnect6(prevPosition); 
+ 
+		if (prevPosition[0].x != -1) { // find 6 connection. WIN!
+			hor1 = prevPosition[0].x ;
+			ver1 = prevPosition[0].y ;
+			hor2 = prevPosition[1].x ;
+			ver2 = prevPosition[1].y; 
 		} else { // else if 
 			hor1 = (rand() % 19) + 'A' ;
 			ver1 = (rand() % 19) + 1 ;
 				
 			hor2 = (rand() % 19) + 'A' ;
 			ver2 = (rand() % 19) + 1 ;
-		}
 
-		// 새 주소 생성
-		
+			prevPosition[0].x = hor1;
+			prevPosition[0].y = ver1;
+			prevPosition[1].x = hor2;
+			prevPosition[1].y = ver2;
+		}
+	
 		snprintf(wbuf, 10, "%c%02d:%c%02d", hor1, ver1, hor2, ver2) ;
 
 		char * rbuf = draw_and_read(wbuf) ;

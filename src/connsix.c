@@ -24,7 +24,7 @@ static status_t board[19][19] ;
 
 static status_t player_color ;
 static status_t opponent_color ;
-
+static position_t prevPosision[2];
 static int first_turn ;
 
 typedef enum _errcode {
@@ -252,6 +252,85 @@ lets_connect (char * ip, int port, char * color)
 	
 	strict_format(bufptr) ;
 	return bufptr ;
+}
+
+void
+canConnect6(position_t prevPosition[])
+{
+	if(prevPosition[0].x == -1){
+		return;
+	}
+	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
+	position_t position[4][11];
+	int window[4][11];
+	for(int i=0; i<2; i++){
+		int x = prevPosition[i].x;
+		int y = prevPosition[i].y;
+		
+		for(int j=0; j<4; j++){
+			for(int k=-5; k<=5; k++){
+				window[j][k+5] = board[x-(dir[j].x)*k][y-(dir[j].y)*k];	
+				position[j][k+5].x = x-(dir[j].x)*k;
+				position[j][k+5].y = y-(dir[j].y)*k;
+			}
+			for(int k=0; k<6; k++){
+				int check = 0;
+				int empty_cnt = 0;
+				int player_stone = 0;
+				position_t empty_position[2];
+				for(int l=0; l<6; l++){
+					if(window[j][k+l] == 0){
+						if(empty_cnt < 2){
+							empty_position[empty_cnt].x = position[j][k+l].x;
+							empty_position[empty_cnt].y = position[j][k+l].y;
+						}
+						empty_cnt++;
+						continue;
+					}
+					else if(window[j][k+l] = player_color){
+						player_stone++;
+					}
+					else{
+						//if(k+l < 6)
+						//	k = k+l;
+						check = 1;
+						player_stone = 0;
+						break; 
+					}					
+				}
+
+				if(player_stone >= 4 && check == 0){
+					if(empty_cnt == 2){ // 6 connection exist with 2 empty space
+						prevPosition[0].x = empty_position[0].x;
+						prevPosition[0].y = empty_position[0].y;
+						prevPosition[1].x = empty_position[1].x;
+						prevPosition[1].y = empty_position[1].y;
+						return;		
+					}
+					else{ // 6 connection exist with 1 empty space
+						prevPosition[0].x = empty_position[0].x;
+						prevPosition[0].y = empty_position[0].y;
+						
+						for(int m=0; m<19; m++){
+							for(int n=0; n<19; n++){
+								if(board[m][n] == EMPTY){
+									prevPosition[1].x = n;
+									prevPosition[1].y = m;
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	prevPosition[0].x = -1; // There are no possible 6 connection
+	prevPosition[0].y = -1;
+	prevPosition[1].x = -1;
+	prevPosition[1].y = -1;
+	return;
 }
 
 char *
