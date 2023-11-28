@@ -257,6 +257,7 @@ lets_connect (char * ip, int port, char * color)
 int
 isEmpty(int x, int y)
 {
+	printf("%d ", board[y][x]);
 	if(board[y][x] == 0)
 		return 1;
 	return 0;
@@ -264,9 +265,8 @@ isEmpty(int x, int y)
 void
 canConnect6(position_t prevPosition[])
 {
-	printf("befor if");
 	if(prevPosition[0].x == -1){
-		printf("in if");
+		printf("dadasd");
 		return;
 	}
 	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
@@ -304,7 +304,7 @@ canConnect6(position_t prevPosition[])
 						empty_cnt++;
 						continue;
 					}
-					else if(window[j][k+l] = player_color){
+					else if(window[j][k+l] == player_color){
 						player_stone++;
 					}
 					else{

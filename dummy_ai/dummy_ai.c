@@ -48,10 +48,11 @@ main ()
 	srand(time(0x0)) ;
 
 	while (1) {
-		printf("start");
+		printf("start\n");
 		canConnect6(prevPosition); 
- 
+		 
 		if (prevPosition[0].x != -1) { // find 6 connection. WIN!
+			printf("vxvx");
 			hor1 = prevPosition[0].x ;
 			ver1 = prevPosition[0].y ;
 			hor2 = prevPosition[1].x ;
@@ -59,23 +60,25 @@ main ()
 		} else { // else if
 			while(1){
 				hor1 = (rand() % 8) + 'A';
-				ver1 = (rand() % 10) + 1;
-				if(isEmpty(hor1 - 'A', ver1)){
+				ver1 = (rand() % 8) + 1;
+				if(isEmpty(hor1 - 'A', ver1-1)){
+					printf("%c%d ", hor1, ver1);
 					break;
 				}
 			}
 
 			while(1){
-				hor2 = (rand() % 8) + 'A' ;
-				ver2 = (rand() % 10) + 1 ;
-				if(isEmpty(hor2 - 'A', ver2)){
+				hor2 = (rand() % 8) + 'A';
+				ver2 = (rand() % 8) + 1;
+				if(isEmpty(hor2 - 'A', ver2-1)){
+					printf("%c%d ", hor2, ver2);
 					break;
 				}
 			}
-			prevPosition[0].x = hor1;
-			prevPosition[0].y = ver1;
-			prevPosition[1].x = hor2;
-			prevPosition[1].y = ver2;
+			prevPosition[0].x = hor1-'A';
+			prevPosition[0].y = ver1-1;
+			prevPosition[1].x = hor2-'A';
+			prevPosition[1].y = ver2-1;
 		}
 		snprintf(wbuf, 10, "%c%02d:%c%02d", hor1, ver1, hor2, ver2) ;
 
@@ -84,7 +87,7 @@ main ()
 			printf("Error!\n") ;
 			break ;
 		}
-		printf("Read %s from server.\n", rbuf) ;
+		printf("Read %s from server2.\n", rbuf) ;
 
 		if (strcmp(rbuf, "WIN") == 0 || strcmp(rbuf, "LOSE") == 0 || strcmp(rbuf, "TIE") == 0)
 			break ;
