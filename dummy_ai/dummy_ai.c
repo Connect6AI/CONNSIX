@@ -48,6 +48,7 @@ main ()
 	srand(time(0x0)) ;
 
 	while (1) {
+		printf("start");
 		canConnect6(prevPosition); 
  
 		if (prevPosition[0].x != -1) { // find 6 connection. WIN!
@@ -55,19 +56,27 @@ main ()
 			ver1 = prevPosition[0].y ;
 			hor2 = prevPosition[1].x ;
 			ver2 = prevPosition[1].y; 
-		} else { // else if 
-			hor1 = (rand() % 19) + 'A' ;
-			ver1 = (rand() % 19) + 1 ;
-				
-			hor2 = (rand() % 19) + 'A' ;
-			ver2 = (rand() % 19) + 1 ;
+		} else { // else if
+			while(1){
+				hor1 = (rand() % 8) + 'A';
+				ver1 = (rand() % 10) + 1;
+				if(isEmpty(hor1 - 'A', ver1)){
+					break;
+				}
+			}
 
+			while(1){
+				hor2 = (rand() % 8) + 'A' ;
+				ver2 = (rand() % 10) + 1 ;
+				if(isEmpty(hor2 - 'A', ver2)){
+					break;
+				}
+			}
 			prevPosition[0].x = hor1;
 			prevPosition[0].y = ver1;
 			prevPosition[1].x = hor2;
 			prevPosition[1].y = ver2;
 		}
-	
 		snprintf(wbuf, 10, "%c%02d:%c%02d", hor1, ver1, hor2, ver2) ;
 
 		char * rbuf = draw_and_read(wbuf) ;
