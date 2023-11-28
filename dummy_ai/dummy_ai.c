@@ -7,6 +7,8 @@
 
 char wbuf[10] ;	
 
+position_t prePosition[2] ;
+
 int
 main ()
 {
@@ -46,11 +48,22 @@ main ()
 	srand(time(0x0)) ;
 
 	while (1) {
-		hor1 = (rand() % 19) + 'A' ;
-		ver1 = (rand() % 19) + 1 ;
-			
-		hor2 = (rand() % 19) + 'A' ;
-		ver2 = (rand() % 19) + 1 ;
+		prePosition = canConnect6(prePosition); 
+		//  
+		if (prePosition[0].x != -1) {
+			hor1 = prePosition[0].x ;
+			ver1 = prePosition[0].y ;
+			hor2 = prePosition[1].x ;
+			ver2 = prePosition[1].y; 
+		} else { // else if 
+			hor1 = (rand() % 19) + 'A' ;
+			ver1 = (rand() % 19) + 1 ;
+				
+			hor2 = (rand() % 19) + 'A' ;
+			ver2 = (rand() % 19) + 1 ;
+		}
+
+		// 새 주소 생성
 		
 		snprintf(wbuf, 10, "%c%02d:%c%02d", hor1, ver1, hor2, ver2) ;
 
