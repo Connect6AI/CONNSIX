@@ -142,3 +142,9 @@ draw_and_read (char * draw) ;
 */
 char
 get_stone_at (char * position) ;
+
+
+typedef struct _position {
+	int x ;
+	int y ;
+} position_t ;
