@@ -254,10 +254,19 @@ lets_connect (char * ip, int port, char * color)
 	return bufptr ;
 }
 
+int
+isEmpty(int x, int y)
+{
+	if(board[y][x] == 0)
+		return 1;
+	return 0;
+}
 void
 canConnect6(position_t prevPosition[])
 {
+	printf("befor if");
 	if(prevPosition[0].x == -1){
+		printf("in if");
 		return;
 	}
 	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
@@ -269,7 +278,12 @@ canConnect6(position_t prevPosition[])
 		
 		for(int j=0; j<4; j++){
 			for(int k=-5; k<=5; k++){
-				window[j][k+5] = board[x-(dir[j].x)*k][y-(dir[j].y)*k];	
+				if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
+					window[j][k+5] = -1;
+				}
+				else{
+					window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
+				}
 				position[j][k+5].x = x-(dir[j].x)*k;
 				position[j][k+5].y = y-(dir[j].y)*k;
 			}
@@ -279,7 +293,10 @@ canConnect6(position_t prevPosition[])
 				int player_stone = 0;
 				position_t empty_position[2];
 				for(int l=0; l<6; l++){
-					if(window[j][k+l] == 0){
+					if(window[j][k+l] == -1){
+						break;
+					}
+					else if(window[j][k+l] == 0){
 						if(empty_cnt < 2){
 							empty_position[empty_cnt].x = position[j][k+l].x;
 							empty_position[empty_cnt].y = position[j][k+l].y;

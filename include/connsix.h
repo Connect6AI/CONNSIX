@@ -149,3 +149,5 @@ typedef struct _position {
 
 void 
 canConnect6(position_t prevPosition[]);
+
+int isEmpty(int x, int y);
