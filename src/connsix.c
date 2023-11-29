@@ -427,7 +427,7 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 	position_t position[4][11];
 	int window[4][11];
 
-	candidateBlock_t candidateBlocks[2];
+	candidateBlock_t candidateBlocks[12];
 	int candidateCount = 0;
 
 	for(int i=0; i<2; i++){
