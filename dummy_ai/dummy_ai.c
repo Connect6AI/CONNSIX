@@ -61,11 +61,22 @@ main ()
 			blockConnect6(prevPosition, oppsPosition);
 			printf("\nprevPosition[0].x: %d, prevPosition[0].y: %d, prevPosition[1].x: %d, prevPosition[1].y: %d\n", prevPosition[0].x, prevPosition[0].y, prevPosition[1].x, prevPosition[1].y);
 			
-			if (prevPosition[0].x != -1) { // find 6 connection. LOSE!
+			if (prevPosition[0].x != -1) {
 				hor1 = prevPosition[0].x;
 				ver1 = prevPosition[0].y;
-				hor2 = prevPosition[1].x;
-				ver2 = prevPosition[1].y;
+				if (prevPosition[1].x != -1) {
+					hor2 = prevPosition[1].x;
+					ver2 = prevPosition[1].y;
+				} else {
+					while(1){
+						hor2 = (rand() % 19);
+						ver2 = (rand() % 19);
+						if(isEmpty(hor2, ver2)){
+							printf("%c%d ", hor2, ver2);
+							break;
+						}
+					}
+				}
 			} 
 			else { 
 				while(1){

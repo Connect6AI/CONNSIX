@@ -466,7 +466,6 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 	for (int i=0; i<candidateindex; i++) {
 		printf("candidate: %d : %d\n", candidate[i].x, candidate[i].y);
 	}
-	candidateindex /= 2;
 
 	if(candidateindex == 0){
 		newPosition[0].x = -1;
@@ -619,7 +618,6 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 					}
 					else if (window[j][k+l] == opponent_color){
 						opps_stone++;
-						// printf("opps_stone: %d\n", opps_stone);
 					}
 					else{
 						check = 1;
@@ -634,11 +632,14 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 						newPosition[0].y = -1;
 						newPosition[1].x = -1;
 						newPosition[1].y = -1;
+						return;
 					}
 		
 					if(empty_cnt == 2){ // 6 connection exist with 2 empty space
 						window[pos[0].x][pos[0].y] = CANDIDATE;
 						window[pos[1].x][pos[1].y] = CANDIDATE;
+						board[empty_position[0].y][empty_position[0].x] = CANDIDATE;
+						board[empty_position[1].y][empty_position[1].x] = CANDIDATE;
 
 						candidateBlocks[candidateIndex].x = empty_position[0].x;
 						candidateBlocks[candidateIndex].y = empty_position[0].y;
@@ -650,6 +651,7 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 					}
 					else{ // 6 connection exist with 1 empty space
 						window[pos[0].x][pos[0].y] = CANDIDATE;
+						board[empty_position[0].y][empty_position[0].x] = CANDIDATE;
 
 						candidateBlocks[candidateIndex].x = empty_position[0].x;
 						candidateBlocks[candidateIndex].y = empty_position[0].y;
@@ -661,6 +663,14 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 			}
 		}
 	}
+
+	for (int i=0; i<19; i++) {
+		for (int j=0; j<19; j++) {
+			if (board[i][j] == CANDIDATE) {
+				board[i][j] = EMPTY;
+			}
+		}
+	}	
 
 	checkBlocked(candidateBlocks, candidateIndex, newPosition);
 	return;
