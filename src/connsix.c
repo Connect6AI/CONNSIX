@@ -343,7 +343,13 @@ canConnect6(position_t prevPosition[])
 				else{
 					window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
 				}
-				position[j][k+5].x = x-(dir[j].x)*k;
+
+				if (x-(dir[j].x)*k >= 8) {
+					position[j][k+5].x = x-(dir[j].x)*k + 1;
+				}
+				else {
+					position[j][k+5].x = x-(dir[j].x)*k;
+				}
 				position[j][k+5].y = y-(dir[j].y)*k;
 			}
 			for(int k=0; k<6; k++){
@@ -437,7 +443,13 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 				else{
 					window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
 				}
-				position[j][k+5].x = x-(dir[j].x)*k;
+
+				if (x-(dir[j].x)*k >= 8) {
+					position[j][k+5].x = x-(dir[j].x)*k + 1;
+				}
+				else {
+					position[j][k+5].x = x-(dir[j].x)*k;
+				}
 				position[j][k+5].y = y-(dir[j].y)*k;
 			}
 			for(int k=0; k<6; k++){
