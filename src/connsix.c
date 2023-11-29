@@ -55,6 +55,65 @@ print_board() {
 	printf("   ABCDEFGHJKLMNOPQRST\n") ;
 }
 
+
+void  
+getOppsPosition (char * stone, int * hor1, int * ver1, int * hor2, int * ver2)
+{
+	char *opps[2];
+	char * _stone = strdup(stone) ;
+
+	 opps[0] = strtok(_stone, ":");
+	 opps[1] = strtok(NULL, ":");
+
+	char a1 = '\0' ;
+	char a2 = '\0' ;
+	int _hor1 = -1 ;
+	int _ver1 = -1 ;
+	int _hor2 = -1 ;
+	int _ver2 = -1 ;
+	int n = 0 ;
+
+
+	sscanf(opps[0], "%c%2d%n", &a1, &_ver1, &n);
+	sscanf(opps[1], "%c%2d%n", &a2, &_ver2, &n);
+
+	if ('a' <= a1 && a1 <= 'h') {
+		_hor1 = a1 - 'a' ;
+	} else if ('A' <= a1 && a1 <= 'H') {
+		_hor1 = a1 - 'A' ;
+	} else if ('j' <= a1 && a1 <= 't') {
+		_hor1 = a1 - 'a' - 1 ;
+	} else if ('J' <= a1 && a1 <= 'T') {
+		_hor1 = a1 - 'A' - 1 ;
+	} 
+	
+	if (0 < _ver1 && _ver1 <= 19) {
+		_ver1 -= 1 ;
+	} 
+
+	if ('a' <= a2 && a2 <= 'h') {
+		_hor2 = a2 - 'a' ;
+	} else if ('A' <= a2 && a2 <= 'H') {
+		_hor2 = a2 - 'A' ;
+	} else if ('j' <= a2 && a2 <= 't') {
+		_hor2 = a2 - 'a' - 1 ;
+	} else if ('J' <= a2 && a2 <= 'T') {
+		_hor2 = a2 - 'A' - 1 ;
+	} 
+	
+	if (0 < _ver2 && _ver2 <= 19) {
+		_ver2 -= 2 ;
+	} 
+
+	
+	*hor1 = _hor1 ;
+	*ver1 = _ver1 ;
+
+	*hor2 = _hor2 ;
+	*ver2 = _ver2 ;
+
+}
+
 static errcode_t 
 parse (char * stone, int * hor, int * ver)
 {
@@ -347,6 +406,103 @@ canConnect6(position_t prevPosition[])
 	prevPosition[0].y = -1;
 	prevPosition[1].x = -1;
 	prevPosition[1].y = -1;
+	return;
+}
+
+void
+blockConnect6(position_t newPosition[], position_t oppsPosition[])
+{
+	if(oppsPosition[0].x == -1){
+		printf("dadasd");
+		return;
+	}
+
+	printf("blockConnect6");
+	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
+	position_t position[4][11];
+	int window[4][11];
+
+	for(int i=0; i<2; i++){
+		
+		int x = oppsPosition[i].x;
+		int y = oppsPosition[i].y;
+
+		printf("x: %d, y: %d\n", x, y);
+		
+		for(int j=0; j<4; j++){
+			for(int k=-5; k<=5; k++){
+				if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
+					window[j][k+5] = -1;
+				}
+				else{
+					window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
+				}
+				position[j][k+5].x = x-(dir[j].x)*k;
+				position[j][k+5].y = y-(dir[j].y)*k;
+			}
+			for(int k=0; k<6; k++){
+				int check = 0;
+				int empty_cnt = 0;
+				int opps_stone = 0;
+				position_t empty_position[2];
+				for(int l=0; l<6; l++){
+					// printf("widow: %d : %d\n", window[j][k+l], opponent_color);
+					if(window[j][k+l] == -1){
+						break;
+					}
+					else if(window[j][k+l] == 0){
+						if(empty_cnt < 2){
+							empty_position[empty_cnt].x = position[j][k+l].x;
+							empty_position[empty_cnt].y = position[j][k+l].y;
+						}
+						empty_cnt++;
+						continue;
+					}
+					else if (window[j][k+l] == opponent_color){
+						opps_stone++;
+						// printf("opps_stone: %d\n", opps_stone);
+					}
+					else{
+						//if(k+l < 6)
+						//	k = k+l;
+						check = 1;
+						opps_stone = 0;
+						break; 
+					}					
+				}
+				// printf("finised\n");
+
+				if(opps_stone >= 4 && check == 0){
+					if(empty_cnt == 2){ // 6 connection exist with 2 empty space
+						newPosition[0].x = empty_position[0].x;
+						newPosition[0].y = empty_position[0].y;
+						newPosition[1].x = empty_position[1].x;
+						newPosition[1].y = empty_position[1].y;
+						return;		
+					}
+					else{ // 6 connection exist with 1 empty space
+						newPosition[0].x = empty_position[0].x;
+						newPosition[0].y = empty_position[0].y;
+						
+						for(int m=0; m<19; m++){
+							for(int n=0; n<19; n++){
+								if(board[m][n] == EMPTY){
+									newPosition[1].x = n;
+									newPosition[1].y = m;
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+	newPosition[0].x = -1; // There are no possible 6 connection
+	newPosition[0].y = -1;
+	newPosition[1].x = -1;
+	newPosition[1].y = -1;
 	return;
 }
 

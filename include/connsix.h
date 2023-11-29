@@ -150,4 +150,10 @@ typedef struct _position {
 void 
 canConnect6(position_t prevPosition[]);
 
+void
+blockConnect6(position_t prevPosition[], position_t oppsPosition[]);
+
 int isEmpty(int x, int y);
+
+void  
+getOppsPosition (char * stone, int * hor1, int * ver1, int * hor2, int * ver2);
