@@ -18,12 +18,8 @@ typedef enum _status {
 	BLACK,
 	WHITE,
 	RED,
+	CANDIDATE,
 } status_t ;
-
-
-typedef struct _posVector {
-	position_t pos[2];
-} candidateBlock_t ;
 
 static status_t board[19][19] ; 
 
@@ -414,6 +410,156 @@ canConnect6(position_t prevPosition[])
 	return;
 }
 
+int checkNo6(position_t candidate) {
+	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
+	position_t position[4][11];
+	int window[4][11];
+
+	int x = candidate.x;
+	int y = candidate.y;
+	
+	for(int j=0; j<4; j++){
+		for(int k=-5; k<=5; k++){
+			if (x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
+				window[j][k+5] = -1;
+			}
+			else {
+				window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
+			}
+			position[j][k+5].x = x-(dir[j].x)*k;
+			position[j][k+5].y = y-(dir[j].y)*k;
+		}
+		for(int k=0; k<6; k++){
+			int check = 0;
+			int empty_cnt = 0;
+			int opponent_stone = 0;
+			
+			for(int l=0; l<6; l++){
+				if(window[j][k+l] == -1){
+					break;
+				}
+				else if(window[j][k+l] == 0){
+					empty_cnt++;
+				}
+				else if (window[j][k+l] == opponent_color){
+					opponent_stone++;
+				}
+				else {
+					check = 1;
+					opponent_stone = 0;
+					break; 
+				}
+			}
+
+			if (opponent_stone >= 4 && check == 0) {
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+
+void checkBlocked(position_t candidate[], int candidateindex, position_t newPosition[]) {
+
+	printf("checkBlocked");
+	for (int i=0; i<candidateindex; i++) {
+		printf("candidate: %d : %d\n", candidate[i].x, candidate[i].y);
+	}
+	candidateindex /= 2;
+
+	if(candidateindex == 0){
+		newPosition[0].x = -1;
+		newPosition[0].y = -1;
+		newPosition[1].x = -1;
+		newPosition[1].y = -1;
+		return;
+	}
+	else if(candidateindex == 1){
+		newPosition[0].x = candidate[0].x;
+		newPosition[0].y = candidate[0].y;
+		newPosition[1].x = -1;
+		newPosition[1].y = -1;
+		return;
+	}
+	else if (candidateindex == 2){
+		newPosition[0].x = candidate[0].x;
+		newPosition[0].y = candidate[0].y;
+		newPosition[1].x = candidate[1].x;
+		newPosition[1].y = candidate[1].y;
+		return;
+	}
+	else if (candidateindex == 3){
+
+		position_t a,b,c;
+		for(int i=0; i<candidateindex; i++){
+			for(int j=i+1; j<candidateindex; j++){
+				a = candidate[i];
+				b = candidate[j];
+				c = candidate[3-i-j];
+				board[a.y][a.x] = player_color;
+				board[b.y][b.x] = player_color;
+
+				if(checkNo6(c)){
+					newPosition[0].x = a.x;
+					newPosition[0].y = a.y;
+					newPosition[1].x = b.x;
+					newPosition[1].y = b.y;
+
+					board[a.y][a.x] = EMPTY;
+					board[b.y][b.x] = EMPTY;
+					return;
+				}
+				else{
+					board[a.y][a.x] = EMPTY;
+					board[b.y][b.x] = EMPTY;
+				}
+			}
+		}
+
+		newPosition[0].x = -1;
+		newPosition[0].y = -1;
+		newPosition[1].x = -1;
+		newPosition[1].y = -1;
+		return;
+	}
+	else if (candidateindex == 4) {
+		position_t a,b,c,d;
+		for(int i=0; i<candidateindex; i++){
+			for(int j=i+1; j<candidateindex; j++){
+				a = candidate[i];
+				b = candidate[j];
+				for(int k=j+1; k<candidateindex; k++){
+					c = candidate[k];
+					d = candidate[6-i-j-k];
+					board[a.y][a.x] = player_color;
+					board[b.y][b.x] = player_color;
+
+					if(checkNo6(c) && checkNo6(d)){
+						newPosition[0].x = a.x;
+						newPosition[0].y = a.y;
+						newPosition[1].x = b.x;
+						newPosition[1].y = b.y;
+
+						board[a.y][a.x] = EMPTY;
+						board[b.y][b.x] = EMPTY;
+						return;
+					}
+					else{
+						board[a.y][a.x] = EMPTY;
+						board[b.y][b.x] = EMPTY;
+					}
+				}
+			}
+		}	
+	}
+	newPosition[0].x = -1;
+	newPosition[0].y = -1;
+	newPosition[1].x = -1;
+	newPosition[1].y = -1;
+	return ;
+}
+
 void
 blockConnect6(position_t newPosition[], position_t oppsPosition[])
 {
@@ -427,8 +573,9 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 	position_t position[4][11];
 	int window[4][11];
 
-	candidateBlock_t candidateBlocks[12];
+	position_t candidateBlocks[4];
 	int candidateCount = 0;
+	int candidateIndex = 0;
 
 	for(int i=0; i<2; i++){
 		
@@ -454,6 +601,7 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 				int empty_cnt = 0;
 				int opps_stone = 0;
 				position_t empty_position[2];
+				position_t pos[2];
 				for(int l=0; l<6; l++){
 					// printf("widow: %d : %d\n", window[j][k+l], opponent_color);
 					if(window[j][k+l] == -1){
@@ -463,6 +611,8 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 						if(empty_cnt < 2){
 							empty_position[empty_cnt].x = position[j][k+l].x;
 							empty_position[empty_cnt].y = position[j][k+l].y;
+							pos[empty_cnt].x = j;
+							pos[empty_cnt].y = k+l; 
 						}
 						empty_cnt++;
 						continue;
@@ -472,91 +622,49 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 						// printf("opps_stone: %d\n", opps_stone);
 					}
 					else{
-						//if(k+l < 6)
-						//	k = k+l;
 						check = 1;
 						opps_stone = 0;
 						break; 
 					}					
 				}
-				// printf("finised\n");
 			
 				if(opps_stone >= 4 && check == 0){
-					// candidateBlocks[cnt] = empty_position;
-					// if (candidateCount > 2) {
-					// 	newPosition[0].x = -1; // There are no possible 6 connection
-					// 	newPosition[0].y = -1;
-					// 	newPosition[1].x = -1;
-					// 	newPosition[1].y = -1;
-					// }
+					if (candidateCount >= 2) {
+						newPosition[0].x = -1; // There are no possible 6 connection
+						newPosition[0].y = -1;
+						newPosition[1].x = -1;
+						newPosition[1].y = -1;
+					}
 		
 					if(empty_cnt == 2){ // 6 connection exist with 2 empty space
-						candidateBlocks[candidateCount].pos[0].x = empty_position[0].x;
-						candidateBlocks[candidateCount].pos[0].y = empty_position[0].y;
-						candidateBlocks[candidateCount].pos[1].x = empty_position[1].x;
-						candidateBlocks[candidateCount].pos[1].y = empty_position[1].y;
+						window[pos[0].x][pos[0].y] = CANDIDATE;
+						window[pos[1].x][pos[1].y] = CANDIDATE;
 
-						// newPosition[0].x = empty_position[0].x;
-						// newPosition[0].y = empty_position[0].y;
-						// newPosition[1].x = empty_position[1].x;
-						// newPosition[1].y = empty_position[1].y;
-						return;		
+						candidateBlocks[candidateIndex].x = empty_position[0].x;
+						candidateBlocks[candidateIndex].y = empty_position[0].y;
+						candidateIndex++;
+						candidateBlocks[candidateIndex].x = empty_position[1].x;
+						candidateBlocks[candidateIndex].y = empty_position[1].y;
+						candidateIndex++;	
+
 					}
 					else{ // 6 connection exist with 1 empty space
-						candidateBlocks[candidateCount].pos[0].x = empty_position[0].x;
-						candidateBlocks[candidateCount].pos[0].y = empty_position[0].y;
-						candidateBlocks[candidateCount].pos[1].x = -1;
-						candidateBlocks[candidateCount].pos[1].y = -1;
-						// newPosition[0].x = empty_position[0].x;
-						// newPosition[0].y = empty_position[0].y;
-						
-						// for(int m=0; m<19; m++){
-						// 	for(int n=0; n<19; n++){
-						// 		if(board[m][n] == EMPTY){
-						// 			newPosition[1].x = n;
-						// 			newPosition[1].y = m;
-						// 			return;
-						// 		}
-						// 	}
-						// }
+						window[pos[0].x][pos[0].y] = CANDIDATE;
+
+						candidateBlocks[candidateIndex].x = empty_position[0].x;
+						candidateBlocks[candidateIndex].y = empty_position[0].y;
+						candidateIndex++;
 					}
+					
 					candidateCount++;
 				}
 			}
 		}
 	}
 
-	if (candidateCount == 0) {
-		newPosition[0].x = -1; // There are no possible 6 connection
-		newPosition[0].y = -1;
-		newPosition[1].x = -1;
-		newPosition[1].y = -1;
-	}
-	else if (candidateCount == 1) {
-		newPosition[0].x = candidateBlocks[0].pos[0].x;
-		newPosition[0].y = candidateBlocks[0].pos[0].y;
-
-		if (candidateBlocks[0].pos[1].x != -1) {
-			newPosition[1].x = candidateBlocks[0].pos[1].x;
-			newPosition[1].y = candidateBlocks[0].pos[1].y;
-		}
-		else {
-			for(int m=0; m<19; m++){
-				for(int n=0; n<19; n++){
-					if(board[m][n] == EMPTY){
-						newPosition[1].x = n;
-						newPosition[1].y = m;
-						return;
-					}
-				}
-			}
-		}
-	} 
-	else if (candidateCount >= 2) {
-				
-	}
-
+	checkBlocked(candidateBlocks, candidateIndex, newPosition);
 	return;
+
 }
 
 char *
