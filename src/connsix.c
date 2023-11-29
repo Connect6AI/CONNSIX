@@ -102,7 +102,7 @@ getOppsPosition (char * stone, int * hor1, int * ver1, int * hor2, int * ver2)
 	} 
 	
 	if (0 < _ver2 && _ver2 <= 19) {
-		_ver2 -= 2 ;
+		_ver2 -= 1 ;
 	} 
 
 	
@@ -343,13 +343,7 @@ canConnect6(position_t prevPosition[])
 				else{
 					window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
 				}
-
-				if (x-(dir[j].x)*k >= 8) {
-					position[j][k+5].x = x-(dir[j].x)*k + 1;
-				}
-				else {
-					position[j][k+5].x = x-(dir[j].x)*k;
-				}
+				position[j][k+5].x = x-(dir[j].x)*k;
 				position[j][k+5].y = y-(dir[j].y)*k;
 			}
 			for(int k=0; k<6; k++){
@@ -443,13 +437,7 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 				else{
 					window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
 				}
-
-				if (x-(dir[j].x)*k >= 8) {
-					position[j][k+5].x = x-(dir[j].x)*k + 1;
-				}
-				else {
-					position[j][k+5].x = x-(dir[j].x)*k;
-				}
+				position[j][k+5].x = x-(dir[j].x)*k;
 				position[j][k+5].y = y-(dir[j].y)*k;
 			}
 			for(int k=0; k<6; k++){

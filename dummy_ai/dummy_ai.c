@@ -53,44 +53,55 @@ main ()
 		
 		if (prevPosition[0].x != -1) { // find 6 connection. WIN!
 			printf("vxvx");
-			hor1 = prevPosition[0].x + 'A';
-			ver1 = prevPosition[0].y + 1 ;
-			hor2 = prevPosition[1].x + 'A';
-			ver2 = prevPosition[1].y + 1 ;
+			hor1 = prevPosition[0].x;
+			ver1 = prevPosition[0].y;
+			hor2 = prevPosition[1].x;
+			ver2 = prevPosition[1].y;
 		} else {
 			blockConnect6(prevPosition, oppsPosition);
 			printf("\nprevPosition[0].x: %d, prevPosition[0].y: %d, prevPosition[1].x: %d, prevPosition[1].y: %d\n", prevPosition[0].x, prevPosition[0].y, prevPosition[1].x, prevPosition[1].y);
 			
 			if (prevPosition[0].x != -1) { // find 6 connection. LOSE!
-				hor1 = prevPosition[0].x + 'A';
-				ver1 = prevPosition[0].y + 1 ;
-				hor2 = prevPosition[1].x + 'A';
-				ver2 = prevPosition[1].y + 1 ;
+				hor1 = prevPosition[0].x;
+				ver1 = prevPosition[0].y;
+				hor2 = prevPosition[1].x;
+				ver2 = prevPosition[1].y;
 			} 
 			else { 
 				while(1){
-					hor1 = (rand() % 8) + 'A';
-					ver1 = (rand() % 8) + 1;
-					if(isEmpty(hor1 - 'A', ver1-1)){
+					hor1 = (rand() % 19);
+					ver1 = (rand() % 19);
+					if(isEmpty(hor1, ver1)){
 						printf("%c%d ", hor1, ver1);
 						break;
 					}
 				}
 
 				while(1){
-					hor2 = (rand() % 8) + 'A';
-					ver2 = (rand() % 8) + 1;
-					if(isEmpty(hor2 - 'A', ver2-1)){
+					hor2 = (rand() % 19);
+					ver2 = (rand() % 19);
+					if(isEmpty(hor2, ver2)){
 						printf("%c%d ", hor2, ver2);
 						break;
 					}
 				}
-				prevPosition[0].x = hor1 - 'A';
-				prevPosition[0].y = ver1 - 1;
-				prevPosition[1].x = hor2 - 'A';
-				prevPosition[1].y = ver2 - 1;
+				prevPosition[0].x = hor1;
+				prevPosition[0].y = ver1;
+				prevPosition[1].x = hor2;
+				prevPosition[1].y = ver2;
+			}
 		}
-		}
+
+		if(hor1 >= 8)
+			hor1 = hor1 + 'A' + 1;
+		else
+			hor1 = hor1 + 'A';
+		if(hor2 >= 8)
+			hor2 = hor2 + 'A' + 1;
+		else
+			hor2 = hor2 + 'A';
+		ver1 = ver1 + 1;
+		ver2 = ver2 + 1;	
 		
 		printf("\nhor1: %c, ver1: %d, hor2: %c, ver2: %d\n", hor1, ver1, hor2, ver2);
 		snprintf(wbuf, 10, "%c%02d:%c%02d", hor1, ver1, hor2, ver2) ;
@@ -107,7 +118,7 @@ main ()
 			break ;
 
 		char *opps[2];
-		char * _rbuf = strdup(redstones) ;
+		char * _rbuf = strdup(rbuf) ;
 		getOppsPosition(rbuf, &oppsPosition[0].x, &oppsPosition[0].y, &oppsPosition[1].x, &oppsPosition[1].y);
 	}
 
