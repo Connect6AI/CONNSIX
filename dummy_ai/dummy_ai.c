@@ -6,9 +6,12 @@
 #include "../include/connsix.h"
 
 char wbuf[10] ;	
+extern int N;
+// position_t prevPosition[2] = {{-1,-1},{-1,-1}};
+// position_t oppsPosition[2] = {{-1,-1},{-1,-1}};
 
-position_t prevPosition[2] = {{-1,-1},{-1,-1}};
-position_t oppsPosition[2] = {{-1,-1},{-1,-1}};
+put_t prevPosition = {{-1,-1},{-1,-1}};
+put_t oppsPosition = {{-1,-1},{-1,-1}};
 
 int
 main ()
@@ -49,42 +52,15 @@ main ()
 	srand(time(0x0)) ;
 
 	while (1) {
-		decideNextStone(prevPosition, oppsPosition);
 
-		canConnect6(prevPosition); 
-		
-		if (prevPosition[0].x != -1) { // find 6 connection. WIN!
-			printf("vxvx");
-			hor1 = prevPosition[0].x;
-			ver1 = prevPosition[0].y;
-			hor2 = prevPosition[1].x;
-			ver2 = prevPosition[1].y;
-		} else {
-			blockConnect6(prevPosition, oppsPosition);
-			printf("\nprevPosition[0].x: %d, prevPosition[0].y: %d, prevPosition[1].x: %d, prevPosition[1].y: %d\n", prevPosition[0].x, prevPosition[0].y, prevPosition[1].x, prevPosition[1].y);
-			if(prevPosition[0].x != -1 && prevPosition[1].x != -1){
-				hor1 = prevPosition[0].x;
-				ver1 = prevPosition[0].y;
-				hor2 = prevPosition[1].x;
-				ver2 = prevPosition[1].y;
-				
-			}
-			else if(prevPosition[1].x == -1){
-				hor1 = prevPosition[0].x;
-				ver1 = prevPosition[0].y;
+		put_score_t nextPosition = decideNextStone(prevPosition, oppsPosition, strcmp(color, "black") == 0 ? 1 : 2);
 
-				getNextPosition(prevPosition, 1); 
-				hor2 = prevPositino[1].x;
-				ver2 = prevPositino[1].y;
-			}
-			else{
-				getNextPosition(prevPosition, 2);
-				hor1 = prevPosition[0].x;
-				ver1 = prevPosition[0].y;
-				hor2 = prevPosition[1].x;
-				ver2 = prevPosition[1].y;
-			}		
-		}
+		prevPosition = nextPosition.put;
+
+		hor1 = nextPosition.put.p1.x;
+		ver1 = nextPosition.put.p1.y;
+		hor2 = nextPosition.put.p2.x;
+		ver2 = nextPosition.put.p2.y;
 
 		if(hor1 >= 8)
 			hor1 = hor1 + 'A' + 1;
@@ -113,7 +89,7 @@ main ()
 
 		char *opps[2];
 		char * _rbuf = strdup(rbuf) ;
-		getOppsPosition(rbuf, &oppsPosition[0].x, &oppsPosition[0].y, &oppsPosition[1].x, &oppsPosition[1].y);
+		getOppsPosition(rbuf, &oppsPosition.p1.x, &oppsPosition.p1.y, &oppsPosition.p2.x, &oppsPosition.p2.y);
 	}
 
 	return 0 ;

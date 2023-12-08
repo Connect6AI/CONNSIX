@@ -27,6 +27,7 @@ static status_t player_color ;
 static status_t opponent_color ;
 static position_t prevPosision[2];
 static int first_turn ;
+int N = 20;
 
 typedef enum _errcode {
 	BADCOORD,
@@ -322,10 +323,12 @@ isEmpty(int x, int y)
 		return 1;
 	return 0;
 }
+
 void
-canConnect6(position_t prevPosition[])
+canConnect6(put_t prevPosition, put_t * nextPosition)
 {
-	if(prevPosition[0].x == -1){
+	position_t temp[2] = {prevPosition.p1, prevPosition.p2};
+	if(temp[0].x == -1){
 		printf("dadasd");
 		return;
 	}
@@ -333,8 +336,8 @@ canConnect6(position_t prevPosition[])
 	position_t position[4][11];
 	int window[4][11];
 	for(int i=0; i<2; i++){
-		int x = prevPosition[i].x;
-		int y = prevPosition[i].y;
+		int x = temp[i].x;
+		int y = temp[i].y;
 		
 		for(int j=0; j<4; j++){
 			for(int k=-5; k<=5; k++){
@@ -378,21 +381,21 @@ canConnect6(position_t prevPosition[])
 
 				if(player_stone >= 4 && check == 0){
 					if(empty_cnt == 2){ // 6 connection exist with 2 empty space
-						prevPosition[0].x = empty_position[0].x;
-						prevPosition[0].y = empty_position[0].y;
-						prevPosition[1].x = empty_position[1].x;
-						prevPosition[1].y = empty_position[1].y;
+						nextPosition->p1.x = empty_position[0].x;
+						nextPosition->p1.y = empty_position[0].y;
+						nextPosition->p2.x = empty_position[1].x;
+						nextPosition->p2.y = empty_position[1].y;
 						return;		
 					}
 					else{ // 6 connection exist with 1 empty space
-						prevPosition[0].x = empty_position[0].x;
-						prevPosition[0].y = empty_position[0].y;
+						nextPosition->p1.x = empty_position[0].x;
+						nextPosition->p1.y = empty_position[0].y;
 						
 						for(int m=0; m<19; m++){
 							for(int n=0; n<19; n++){
 								if(board[m][n] == EMPTY){
-									prevPosition[1].x = n;
-									prevPosition[1].y = m;
+									nextPosition->p2.x = n;
+									nextPosition->p2.y = m;
 									return;
 								}
 							}
@@ -403,14 +406,15 @@ canConnect6(position_t prevPosition[])
 		}
 		
 	}
-	prevPosition[0].x = -1; // There are no possible 6 connection
-	prevPosition[0].y = -1;
-	prevPosition[1].x = -1;
-	prevPosition[1].y = -1;
+	nextPosition->p1.x = -1; // There are no possible 6 connection
+	nextPosition->p1.y = -1;
+	nextPosition->p2.x = -1;
+	nextPosition->p2.y = -1;
 	return;
 }
 
-int checkNo6(position_t candidate) {
+int 
+checkNo6(position_t candidate) {
 	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
 	position_t position[4][11];
 	int window[4][11];
@@ -460,7 +464,8 @@ int checkNo6(position_t candidate) {
 }
 
 
-void checkBlocked(position_t candidate[], int candidateindex, position_t newPosition[]) {
+void 
+checkBlocked(position_t candidate[], int candidateindex, put_t * nextPosition) {
 
 	printf("checkBlocked");
 	for (int i=0; i<candidateindex; i++) {
@@ -468,17 +473,17 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 	}
 
 	if(candidateindex == 0){
-		newPosition[0].x = -1;
-		newPosition[0].y = -1;
-		newPosition[1].x = -1;
-		newPosition[1].y = -1;
+		nextPosition->p1.x = -1;
+		nextPosition->p1.y = -1;
+		nextPosition->p2.x = -1;
+		nextPosition->p2.y = -1;
 		return;
 	}
 	else if(candidateindex == 1){
-		newPosition[0].x = candidate[0].x;
-		newPosition[0].y = candidate[0].y;
-		newPosition[1].x = -1;
-		newPosition[1].y = -1;
+		nextPosition->p1.x = candidate[0].x;
+		nextPosition->p1.y = candidate[0].y;
+		nextPosition->p2.x = -1;
+		nextPosition->p2.y = -1;
 		return;
 	}
 	else if (candidateindex == 2){
@@ -487,10 +492,10 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 		b = candidate[1];
 		board[a.y][a.x] = player_color;
 		if(checkNo6(b)){
-			newPosition[0].x = a.x;
-			newPosition[0].y = a.y;
-			newPosition[1].x = -1;
-			newPosition[1].y = -1;
+			nextPosition->p1.x = a.x;
+			nextPosition->p1.y = a.y;
+			nextPosition->p2.x = -1;
+			nextPosition->p2.y = -1;
 
 			board[a.y][a.x] = EMPTY;
 			return;
@@ -499,20 +504,20 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 		board[a.y][a.x] = EMPTY;	
 		board[b.y][b.x] = player_color;
 		if(checkNo6(a)){
-			newPosition[0].x = b.x;
-			newPosition[0].y = b.y;
-			newPosition[1].x = -1;
-			newPosition[1].y = -1;
+			nextPosition->p1.x = b.x;
+			nextPosition->p1.y = b.y;
+			nextPosition->p2.x = -1;
+			nextPosition->p2.y = -1;
 
 			board[b.y][b.x] = EMPTY;
 			return;
 		}
 		board[b.y][b.x] = EMPTY;
 		
-		newPosition[0].x = candidate[0].x;
-		newPosition[0].y = candidate[0].y;
-		newPosition[1].x = candidate[1].x;
-		newPosition[1].y = candidate[1].y;
+		nextPosition->p1.x = candidate[0].x;
+		nextPosition->p1.y = candidate[0].y;
+		nextPosition->p2.x = candidate[1].x;
+		nextPosition->p2.y = candidate[1].y;
 		return;
 	}
 	else if (candidateindex == 3){
@@ -524,10 +529,10 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 
 		board[a.y][a.x] = player_color;
 		if(checkNo6(b) && checkNo6(c)){
-			newPosition[0].x = a.x;
-			newPosition[0].y = a.y;
-			newPosition[1].x = -1;
-			newPosition[1].y = -1;
+			nextPosition->p1.x = a.x;
+			nextPosition->p1.y = a.y;
+			nextPosition->p2.x = -1;
+			nextPosition->p2.y = -1;
 
 			board[a.y][a.x] = EMPTY;
 			return;
@@ -536,10 +541,10 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 		board[a.y][a.x] = EMPTY;
 		board[b.y][b.x] = player_color;
 		if(checkNo6(a) && checkNo6(c)){
-			newPosition[0].x = b.x;
-			newPosition[0].y = b.y;
-			newPosition[1].x = -1;
-			newPosition[1].y = -1;
+			nextPosition->p1.x = b.x;
+			nextPosition->p1.y = b.y;
+			nextPosition->p2.x = -1;
+			nextPosition->p2.y = -1;
 
 			board[b.y][b.x] = EMPTY;
 			return;
@@ -548,10 +553,10 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 		board[b.y][b.x] = EMPTY;
 		board[c.y][c.x] = player_color;
 		if(checkNo6(a) && checkNo6(b)){
-			newPosition[0].x = c.x;
-			newPosition[0].y = c.y;
-			newPosition[1].x = -1;
-			newPosition[1].y = -1;
+			nextPosition->p1.x = c.x;
+			nextPosition->p1.y = c.y;
+			nextPosition->p2.x = -1;
+			nextPosition->p2.y = -1;
 
 			board[c.y][c.x] = EMPTY;
 			return;
@@ -567,10 +572,10 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 				board[b.y][b.x] = player_color;
 
 				if(checkNo6(c)){
-					newPosition[0].x = a.x;
-					newPosition[0].y = a.y;
-					newPosition[1].x = b.x;
-					newPosition[1].y = b.y;
+					nextPosition->p1.x = a.x;
+					nextPosition->p1.y = a.y;
+					nextPosition->p2.x = b.x;
+					nextPosition->p2.y = b.y;
 
 					board[a.y][a.x] = EMPTY;
 					board[b.y][b.x] = EMPTY;
@@ -583,10 +588,10 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 			}
 		}
 
-		newPosition[0].x = -1;
-		newPosition[0].y = -1;
-		newPosition[1].x = -1;
-		newPosition[1].y = -1;
+		nextPosition->p1.x = -1;
+		nextPosition->p1.y = -1;
+		nextPosition->p2.x = -1;
+		nextPosition->p2.y = -1;
 		return;
 	}
 	else if (candidateindex == 4) {
@@ -602,10 +607,10 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 					board[b.y][b.x] = player_color;
 
 					if(checkNo6(c) && checkNo6(d)){
-						newPosition[0].x = a.x;
-						newPosition[0].y = a.y;
-						newPosition[1].x = b.x;
-						newPosition[1].y = b.y;
+						nextPosition->p1.x = a.x;
+						nextPosition->p1.y = a.y;
+						nextPosition->p2.x = b.x;
+						nextPosition->p2.y = b.y;
 
 						board[a.y][a.x] = EMPTY;
 						board[b.y][b.x] = EMPTY;
@@ -619,17 +624,18 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 			}
 		}	
 	}
-	newPosition[0].x = -1;
-	newPosition[0].y = -1;
-	newPosition[1].x = -1;
-	newPosition[1].y = -1;
+	nextPosition->p1.x = -1;
+	nextPosition->p1.y = -1;
+	nextPosition->p2.x = -1;
+	nextPosition->p2.y = -1;
 	return ;
 }
 
 void
-blockConnect6(position_t newPosition[], position_t oppsPosition[])
+blockConnect6(put_t oppsPosition, put_t * nextPosition)
 {
-	if(oppsPosition[0].x == -1){
+	position_t temp[2] = {oppsPosition.p1, oppsPosition.p2};
+	if(temp[0].x == -1){
 		printf("dadasd");
 		return;
 	}
@@ -645,8 +651,8 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 
 	for(int i=0; i<2; i++){
 		
-		int x = oppsPosition[i].x;
-		int y = oppsPosition[i].y;
+		int x = temp[i].x;
+		int y = temp[i].y;
 
 		printf("x: %d, y: %d\n", x, y);
 
@@ -695,10 +701,10 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 			
 				if(opps_stone >= 4 && check == 0){
 					if (candidateCount >= 2) {
-						newPosition[0].x = -1; // There are no possible 6 connection
-						newPosition[0].y = -1;
-						newPosition[1].x = -1;
-						newPosition[1].y = -1;
+						nextPosition->p1.x = -1; // There are no possible 6 connection
+						nextPosition->p1.y = -1;
+						nextPosition->p2.x = -1;
+						nextPosition->p2.y = -1;
 						return;
 					}
 		
@@ -739,10 +745,51 @@ blockConnect6(position_t newPosition[], position_t oppsPosition[])
 		}
 	}	
 
-	checkBlocked(candidateBlocks, candidateIndex, newPosition);
+	checkBlocked(candidateBlocks, candidateIndex, nextPosition);
 	return;
 
 }
+
+int
+getBoardScore(int x, int y, int player) {
+
+	return 0;
+}
+
+void 
+getNextPosition(put_t nextPosition, int candidateCount, int player) {
+	int curr_score, min_score = 999999;
+	int opponent = (player == 1) ? 2 : 1;
+	position_t candidateList[N];
+	
+	if (candidateCount == 1) { // one stone is fixed
+		int first_score = getBoardScore(prevPosision[0].x, prevPosision[0].y, player);
+		board[prevPosision[0].y][prevPosision[0].x] = player;
+		
+		for (int i=0; i<19; i++) {
+			for (int j=0; j<19; j++) {
+				if (board[i][j] != EMPTY) {
+					continue;
+				}
+				else {
+					curr_score = first_score + getBoardScore(j, i, player);
+					if (curr_score < min_score) {
+						min_score = curr_score;
+						
+						prevPosision[1].x = j;
+						prevPosision[1].y = i; 
+					}
+				}
+			}
+		}
+	}
+	else{ // no stone is fixed.
+		
+	}
+
+ 	return;
+}
+
 
 char *
 draw_and_read (char * draw)
@@ -804,5 +851,34 @@ get_stone_at (char * position) {
 		case RED : return 'R' ; 
 		default : return 0x0 ;
 	}
+}
+
+put_score_t
+decideNextStone(put_t prevPosition, put_t oppsPosition, int player) {
+	put_t nextPosition;
+	put_score_t nextPositionScore;
+
+	canConnect6(prevPosition, &nextPosition); 
+	if(nextPosition.p1.x != -1){ // game over
+		nextPositionScore.put = nextPosition;
+		nextPositionScore.score = 999999;
+		return nextPositionScore;
+	}
+	else{
+		blockConnect6(oppsPosition, &nextPosition);
+		if(nextPosition.p1.x != -1 && nextPosition.p2.x != -1){
+			nextPositionScore.put = nextPosition;
+			nextPositionScore.score = -999999;
+			return nextPositionScore;
+		}
+		else if(nextPosition.p2.x == -1){
+			getNextPosition(nextPosition, 1, player); 
+		}
+		else{
+			getNextPosition(nextPosition, 2, player);
+		}		
+	}
+	
+	return;
 }
 /* API functions */

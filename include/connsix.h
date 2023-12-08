@@ -147,13 +147,32 @@ typedef struct _position {
 	int y ;
 } position_t ;
 
+typedef struct _positionPair {
+	position_t p1;
+	position_t p2;
+} put_t ;
+
+typedef struct _put_score {
+	put_t put;
+	int score;
+} put_score_t;
+
 void 
-canConnect6(position_t prevPosition[]);
+canConnect6(put_t prevPosition, put_t * nextPosition);
 
 void
-blockConnect6(position_t prevPosition[], position_t oppsPosition[]);
+blockConnect6(put_t prevPosition, put_t * nextPosition);
 
 int isEmpty(int x, int y);
 
 void  
 getOppsPosition (char * stone, int * hor1, int * ver1, int * hor2, int * ver2);
+
+void 
+getNextPosition(put_t nextPosition, int candidateCount, int player);
+
+int
+getBoardScore(int x, int y, int player);
+
+put_score_t
+decideNextStone(put_t prevPosition, put_t oppsPosition, int player);
