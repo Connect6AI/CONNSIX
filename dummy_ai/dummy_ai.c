@@ -49,6 +49,8 @@ main ()
 	srand(time(0x0)) ;
 
 	while (1) {
+		decideNextStone(prevPosition, oppsPosition);
+
 		canConnect6(prevPosition); 
 		
 		if (prevPosition[0].x != -1) { // find 6 connection. WIN!
@@ -60,47 +62,28 @@ main ()
 		} else {
 			blockConnect6(prevPosition, oppsPosition);
 			printf("\nprevPosition[0].x: %d, prevPosition[0].y: %d, prevPosition[1].x: %d, prevPosition[1].y: %d\n", prevPosition[0].x, prevPosition[0].y, prevPosition[1].x, prevPosition[1].y);
-			
-			if (prevPosition[0].x != -1) {
+			if(prevPosition[0].x != -1 && prevPosition[1].x != -1){
 				hor1 = prevPosition[0].x;
 				ver1 = prevPosition[0].y;
-				if (prevPosition[1].x != -1) {
-					hor2 = prevPosition[1].x;
-					ver2 = prevPosition[1].y;
-				} else {
-					while(1){
-						hor2 = (rand() % 19);
-						ver2 = (rand() % 19);
-						if(isEmpty(hor2, ver2)){
-							printf("%c%d ", hor2, ver2);
-							break;
-						}
-					}
-				}
-			} 
-			else { 
-				while(1){
-					hor1 = (rand() % 19);
-					ver1 = (rand() % 19);
-					if(isEmpty(hor1, ver1)){
-						printf("%c%d ", hor1, ver1);
-						break;
-					}
-				}
-
-				while(1){
-					hor2 = (rand() % 19);
-					ver2 = (rand() % 19);
-					if(isEmpty(hor2, ver2)){
-						printf("%c%d ", hor2, ver2);
-						break;
-					}
-				}
-				prevPosition[0].x = hor1;
-				prevPosition[0].y = ver1;
-				prevPosition[1].x = hor2;
-				prevPosition[1].y = ver2;
+				hor2 = prevPosition[1].x;
+				ver2 = prevPosition[1].y;
+				
 			}
+			else if(prevPosition[1].x == -1){
+				hor1 = prevPosition[0].x;
+				ver1 = prevPosition[0].y;
+
+				getNextPosition(prevPosition, 1); 
+				hor2 = prevPositino[1].x;
+				ver2 = prevPositino[1].y;
+			}
+			else{
+				getNextPosition(prevPosition, 2);
+				hor1 = prevPosition[0].x;
+				ver1 = prevPosition[0].y;
+				hor2 = prevPosition[1].x;
+				ver2 = prevPosition[1].y;
+			}		
 		}
 
 		if(hor1 >= 8)
