@@ -92,5 +92,6 @@ main ()
 		getOppsPosition(rbuf, &oppsPosition.p1.x, &oppsPosition.p1.y, &oppsPosition.p2.x, &oppsPosition.p2.y);
 	}
 
+
 	return 0 ;
 }
