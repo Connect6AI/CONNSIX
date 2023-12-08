@@ -329,7 +329,9 @@ canConnect6(put_t prevPosition, put_t * nextPosition)
 {
 	position_t temp[2] = {prevPosition.p1, prevPosition.p2};
 	if(temp[0].x == -1){
-		printf("dadasd");
+		printf("canConnect6");
+		nextPosition->p1.x = -1;
+		nextPosition->p1.y = -1;
 		return;
 	}
 	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
@@ -635,8 +637,14 @@ void
 blockConnect6(put_t oppsPosition, put_t * nextPosition)
 {
 	position_t temp[2] = {oppsPosition.p1, oppsPosition.p2};
+	printf("OppsPosition: %d : %d\n", temp[0].x, temp[0].y);
+
 	if(temp[0].x == -1){
-		printf("dadasd");
+		printf("\nblockConnect6\n");
+		nextPosition->p1.x = -1;
+		nextPosition->p1.y = -1;
+		nextPosition->p2.x = -1;
+		nextPosition->p2.y = -1;
 		return;
 	}
 
@@ -858,27 +866,68 @@ decideNextStone(put_t prevPosition, put_t oppsPosition, int player) {
 	put_t nextPosition;
 	put_score_t nextPositionScore;
 
+	printf("decideNextStone");
+
 	canConnect6(prevPosition, &nextPosition); 
 	if(nextPosition.p1.x != -1){ // game over
+		printf("game over");
 		nextPositionScore.put = nextPosition;
 		nextPositionScore.score = 999999;
 		return nextPositionScore;
 	}
-	else{
+	else {
 		blockConnect6(oppsPosition, &nextPosition);
+
 		if(nextPosition.p1.x != -1 && nextPosition.p2.x != -1){
 			nextPositionScore.put = nextPosition;
 			nextPositionScore.score = -999999;
 			return nextPositionScore;
 		}
-		else if(nextPosition.p2.x == -1){
-			getNextPosition(nextPosition, 1, player); 
+		else if (nextPosition.p1.x != -1 && nextPosition.p2.x == -1){ // one stone is fixed
+			printf("\none stone is fixed\n\n");
+			printf("%d %d", nextPosition.p1.x, nextPosition.p1.y);
+			while(1){
+				int x = (rand() % 19);
+				int y = (rand() % 19);
+
+				if(isEmpty(x, y)){
+					nextPosition.p2.x = x;
+					nextPosition.p2.y = y;
+					nextPositionScore.put = nextPosition;
+					// printf("%c%d ", hor2, ver2);
+					break;
+				}
+			}
+			// getNextPosition(nextPosition, 1, player); 
+
 		}
-		else{
-			getNextPosition(nextPosition, 2, player);
+		else{ // no stone is fixed.
+			printf("no stone is fixed");
+			while(1){
+				int x = (rand() % 19);
+				int y = (rand() % 19);
+				if(isEmpty(x, y)){
+					nextPosition.p1.x = x;
+					nextPosition.p1.y = y;
+					// printf("%c%d ", hor2, ver2);
+					break;
+				}
+			}
+			while(1){
+				int x = (rand() % 19);
+				int y = (rand() % 19);
+				if(isEmpty(x, y)){
+					nextPosition.p2.x = x;
+					nextPosition.p2.y = y;
+					nextPositionScore.put = nextPosition;
+					// printf("%c%d ", hor2, ver2);
+					break;
+				}
+			}
+			// getNextPosition(nextPosition, 2, player);
 		}		
 	}
 	
-	return;
+	return nextPositionScore;
 }
 /* API functions */
