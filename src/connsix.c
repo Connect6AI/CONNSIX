@@ -482,6 +482,7 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 		return;
 	}
 	else if (candidateindex == 2){
+		position_t a,b;
 		a = candidate[0];
 		b = candidate[1];
 		board[a.y][a.x] = player_color;
@@ -495,6 +496,7 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 			return;
 		}
 
+		board[a.y][a.x] = EMPTY;	
 		board[b.y][b.x] = player_color;
 		if(checkNo6(a)){
 			newPosition[0].x = b.x;
@@ -505,8 +507,6 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 			board[b.y][b.x] = EMPTY;
 			return;
 		}
-			
-		board[a.y][a.x] = EMPTY;
 		board[b.y][b.x] = EMPTY;
 		
 		newPosition[0].x = candidate[0].x;
@@ -516,8 +516,48 @@ void checkBlocked(position_t candidate[], int candidateindex, position_t newPosi
 		return;
 	}
 	else if (candidateindex == 3){
-
 		position_t a,b,c;
+
+		a = candidate[0];
+		b = candidate[1];
+		c = candidate[2];
+
+		board[a.y][a.x] = player_color;
+		if(checkNo6(b) && checkNo6(c)){
+			newPosition[0].x = a.x;
+			newPosition[0].y = a.y;
+			newPosition[1].x = -1;
+			newPosition[1].y = -1;
+
+			board[a.y][a.x] = EMPTY;
+			return;
+		}
+
+		board[a.y][a.x] = EMPTY;
+		board[b.y][b.x] = player_color;
+		if(checkNo6(a) && checkNo6(c)){
+			newPosition[0].x = b.x;
+			newPosition[0].y = b.y;
+			newPosition[1].x = -1;
+			newPosition[1].y = -1;
+
+			board[b.y][b.x] = EMPTY;
+			return;
+		}
+		
+		board[b.y][b.x] = EMPTY;
+		board[c.y][c.x] = player_color;
+		if(checkNo6(a) && checkNo6(b)){
+			newPosition[0].x = c.x;
+			newPosition[0].y = c.y;
+			newPosition[1].x = -1;
+			newPosition[1].y = -1;
+
+			board[c.y][c.x] = EMPTY;
+			return;
+		}
+		board[c.y][c.x] = EMPTY;
+
 		for(int i=0; i<candidateindex; i++){
 			for(int j=i+1; j<candidateindex; j++){
 				a = candidate[i];
