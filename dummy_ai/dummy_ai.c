@@ -52,7 +52,6 @@ main ()
 	srand(time(0x0)) ;
 
 	while (1) {
-
 		put_score_t nextPosition = decideNextStone(prevPosition, oppsPosition, strcmp(color, "black") == 0 ? 1 : 2, 0);
 
 		prevPosition = nextPosition.put;
@@ -91,7 +90,6 @@ main ()
 		char * _rbuf = strdup(rbuf) ;
 		getOppsPosition(rbuf, &oppsPosition.p1.x, &oppsPosition.p1.y, &oppsPosition.p2.x, &oppsPosition.p2.y);
 	}
-
 
 	return 0 ;
 }
