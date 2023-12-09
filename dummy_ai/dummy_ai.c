@@ -53,7 +53,7 @@ main ()
 
 	while (1) {
 
-		put_score_t nextPosition = decideNextStone(prevPosition, oppsPosition, strcmp(color, "black") == 0 ? 1 : 2);
+		put_score_t nextPosition = decideNextStone(prevPosition, oppsPosition, strcmp(color, "black") == 0 ? 1 : 2, 0);
 
 		prevPosition = nextPosition.put;
 

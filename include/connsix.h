@@ -154,7 +154,7 @@ typedef struct _positionPair {
 
 typedef struct _put_score {
 	put_t put;
-	int score;
+	double score;
 } put_score_t;
 
 void 
@@ -163,16 +163,21 @@ canConnect6(put_t prevPosition, put_t * nextPosition);
 void
 blockConnect6(put_t prevPosition, put_t * nextPosition);
 
-int isEmpty(int x, int y);
+int 
+isEmpty(int x, int y);
 
 void  
 getOppsPosition (char * stone, int * hor1, int * ver1, int * hor2, int * ver2);
 
 void 
-getNextPosition(put_t nextPosition, int candidateCount, int player);
+getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int candidateCount, int player);
 
-int
+double
 getBoardScore(int x, int y, int player);
 
 put_score_t
-decideNextStone(put_t prevPosition, put_t oppsPosition, int player);
+decideNextStone(put_t prevPosition, put_t oppsPosition, int player, int currentDepth);
+
+int 
+compare_scores(const void *a, const void *b) ;
+
