@@ -7,8 +7,6 @@
 
 char wbuf[10] ;	
 extern int N;
-// position_t prevPosition[2] = {{-1,-1},{-1,-1}};
-// position_t oppsPosition[2] = {{-1,-1},{-1,-1}};
 
 put_t prevPosition = {{-1,-1},{-1,-1}};
 put_t oppsPosition = {{-1,-1},{-1,-1}};
@@ -72,7 +70,6 @@ main ()
 		ver1 = ver1 + 1;
 		ver2 = ver2 + 1;	
 		
-		printf("\nhor1: %c, ver1: %d, hor2: %c, ver2: %d\n", hor1, ver1, hor2, ver2);
 		snprintf(wbuf, 10, "%c%02d:%c%02d", hor1, ver1, hor2, ver2) ;
 
 		char * rbuf = draw_and_read(wbuf) ;
