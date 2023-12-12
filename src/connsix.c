@@ -27,8 +27,8 @@ static status_t player_color ;
 static status_t opponent_color ;
 static position_t prevPosision[2];
 static int first_turn ;
-static int maxDepth = 1;
-int N = 3;
+static int maxDepth = 3;
+int N = 10;
 
 typedef enum _errcode {
 	BADCOORD,
@@ -826,12 +826,22 @@ getBoardScore(int x, int y, int player)
 	return score;
 }
 
+// int 
+// compare_scores(const void *a, const void *b) {
+//     put_score_t *scoreA = (put_score_t *)a;
+//     put_score_t *scoreB = (put_score_t *)b;
+//     return (scoreA->score > scoreB->score); // 내림차순 정렬
+// }
 int 
 compare_scores(const void *a, const void *b) {
     put_score_t *scoreA = (put_score_t *)a;
     put_score_t *scoreB = (put_score_t *)b;
-    return (scoreA->score > scoreB->score); // 내림차순 정렬
+    
+    if (scoreA->score > scoreB->score) return -1; // For descending order
+    if (scoreA->score < scoreB->score) return 1;
+    return 0;
 }
+
 
 void 
 getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int candidateCount, int player) {
@@ -888,7 +898,7 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
 		
 		qsort(scores, count, sizeof(put_score_t), compare_scores);
 		for(int m = 0; m < count; m++) {
-			// printf("scores: %d : %d : %f\n", scores[m].put.p1.x, scores[m].put.p1.y, scores[m].score);
+			printf("scores: %d : %d : %f\n", scores[m].put.p1.x, scores[m].put.p1.y, scores[m].score);
 		}
         for (int i = 0; i < N && i < count; i++) {
             nextPositionCandidate[i] = scores[i];
