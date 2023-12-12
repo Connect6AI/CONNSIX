@@ -762,15 +762,19 @@ getBoardScore(int x, int y, int player)
 {
 	double PlayerFactor[6] = { 0.0, 1.0, 3.96, 12.05, 0.0, 0.0 }; 
 	double OpponentFactor[6] = { 0.0, 1.33, 6.79, 19.52, 0.0, 0.0 }; 
+
 	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
 	position_t position[4][11];
+
 	int window[4][11];
+
 	int opponent = 3 - player;
 	double score = 0.0;
+	
 	board[y][x] = player;
 	
-	for(int j=0; j<4; j++){
-		for(int k=-5; k<=5; k++){
+	for (int j=0; j<4; j++) {
+		for (int k=-5; k<=5; k++) {
 			if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
 				window[j][k+5] = -1;
 			}
@@ -780,25 +784,23 @@ getBoardScore(int x, int y, int player)
 			position[j][k+5].x = x-(dir[j].x)*k;
 			position[j][k+5].y = y-(dir[j].y)*k;
 		}
-		for(int k=0; k<6; k++){
+		for (int k=0; k<6; k++) {
 			int check = 0;
 			int player_stone = 0;
 			int opponent_stone = 0;
 
-			for(int l=0; l<6; l++){
-				if(window[j][k+l] == -1){
+			for (int l=0; l<6; l++) {
+				if (window[j][k+l] == -1){
 					break;
 				}
-				else if(window[j][k+l] == player){
+				else if (window[j][k+l] == player){
 					player_stone++;
-
-					// printf("%d %d player_stone: %d\n", position[j][k+l].x, position[j][k+l].y, player_stone);
 				}
 				else if (window[j][k+l] == opponent){
 					opponent_stone++;
 					check = 1;
 				}
-				else if(window[j][k+l] == RED){
+				else if (window[j][k+l] == RED){
 					player_stone = 0;
 					opponent_stone = 0;
 					check = 1;
@@ -806,7 +808,7 @@ getBoardScore(int x, int y, int player)
 				}
 			}
 
-			if(player_stone >= 4 && check == 0){
+			if (player_stone >= 4 && check == 0) {
 				score += 999999;
 			}
 			else if (opponent_stone == 0) {
@@ -870,7 +872,6 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
         for (int i = 0; i < N && i < count; i++) {
             nextPositionCandidate[i] = scores[i];
 			printf("nextPositionCandidate: %d : %d\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y);
-
         }
 	}
 	else { // no stone is fixed.
@@ -889,7 +890,7 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
 		}
 		
 		qsort(scores, count, sizeof(put_score_t), compare_scores);
-		for(int m =0; m<count; m++) {
+		for(int m = 0; m < count; m++) {
 			printf("scores: %d : %d : %f\n", scores[m].put.p1.x, scores[m].put.p1.y, scores[m].score);
 		}
         for (int i = 0; i < N && i < count; i++) {
@@ -915,8 +916,6 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
 			printf("nextPositionCandidate: %d : %d\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y);
         }
 	}
-
-	
 
  	return;
 }
