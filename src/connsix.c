@@ -774,7 +774,7 @@ getBoardScore(int x, int y, int player)
 	for (int i = 0; i < 4; i++) {
 		// printf("x: %d, y: %d\n", x, y);
 		for (int k=-5; k<=5; k++) {
-			if (x-(dir[i].x)*k > 18 || y-(dir[i].y)*k > 18) {
+			if (x-(dir[i].x)*k > 18 || y-(dir[i].y)*k > 18 || x-(dir[i].x)*k < 0 || y-(dir[i].y)*k <0) {
 				window[i][k+5] = -1;
 			}
 			else {
