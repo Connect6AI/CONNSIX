@@ -319,7 +319,6 @@ lets_connect (char * ip, int port, char * color)
 int
 isEmpty(int x, int y)
 {
-	printf("%d ", board[y][x]);
 	if(board[y][x] == 0)
 		return 1;
 	return 0;
@@ -636,14 +635,15 @@ void
 blockConnect6(put_t oppsPosition, put_t * nextPosition)
 {
 	position_t temp[2] = {oppsPosition.p1, oppsPosition.p2};
-	printf("OppsPosition: %d : %d\n", temp[0].x, temp[0].y);
+	printf("OppsPosition: %d : %d / %d : %d \n", temp[0].x, temp[0].y, temp[1].x, temp[1].y);
+
+	nextPosition->p1.x = -1;
+	nextPosition->p1.y = -1;
+	nextPosition->p2.x = -1;
+	nextPosition->p2.y = -1;
 
 	if(temp[0].x == -1){
 		printf("-1 blockConnect6\n");
-		nextPosition->p1.x = -1;
-		nextPosition->p1.y = -1;
-		nextPosition->p2.x = -1;
-		nextPosition->p2.y = -1;
 		return;
 	}
 
@@ -660,8 +660,6 @@ blockConnect6(put_t oppsPosition, put_t * nextPosition)
 		
 		int x = temp[i].x;
 		int y = temp[i].y;
-
-		printf("x: %d, y: %d\n", x, y);
 
 		for(int j=0; j<4; j++){
 			for(int k=-5; k<=5; k++){
@@ -773,16 +771,18 @@ getBoardScore(int x, int y, int player)
 	
 	board[y][x] = player;
 	
-	for (int j=0; j<4; j++) {
+	for (int i = 0; i < 4; i++) {
+		// printf("x: %d, y: %d\n", x, y);
 		for (int k=-5; k<=5; k++) {
-			if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
-				window[j][k+5] = -1;
+			if (x-(dir[i].x)*k > 18 || y-(dir[i].y)*k > 18) {
+				window[i][k+5] = -1;
 			}
-			else{
-				window[j][k+5] = board[y-(dir[j].y)*k][x-(dir[j].x)*k];	
+			else {
+				window[i][k+5] = board[y-(dir[i].y)*k][x-(dir[i].x)*k];	
+				// printf("widow[%d][%d]: %d\t", i, k+5, window[i][k+5]);
 			}
-			position[j][k+5].x = x-(dir[j].x)*k;
-			position[j][k+5].y = y-(dir[j].y)*k;
+			position[i][k+5].x = x-(dir[i].x)*k;
+			position[i][k+5].y = y-(dir[i].y)*k;
 		}
 		for (int k=0; k<6; k++) {
 			int check = 0;
@@ -790,17 +790,17 @@ getBoardScore(int x, int y, int player)
 			int opponent_stone = 0;
 
 			for (int l=0; l<6; l++) {
-				if (window[j][k+l] == -1){
+				if (window[i][k+l] == -1){
 					break;
 				}
-				else if (window[j][k+l] == player){
+				else if (window[i][k+l] == player){
 					player_stone++;
 				}
-				else if (window[j][k+l] == opponent){
+				else if (window[i][k+l] == opponent){
 					opponent_stone++;
 					check = 1;
 				}
-				else if (window[j][k+l] == RED){
+				else if (window[i][k+l] == RED){
 					player_stone = 0;
 					opponent_stone = 0;
 					check = 1;
@@ -809,18 +809,19 @@ getBoardScore(int x, int y, int player)
 			}
 
 			if (player_stone >= 4 && check == 0) {
-				score += 999999;
+				score += 10000;
 			}
 			else if (opponent_stone == 0) {
 				score += PlayerFactor[player_stone];
 			}
-			else if (opponent_stone == 1) {
+			else if (player_stone == 1) {
 				score += OpponentFactor[opponent_stone];
 			}
 		}
 	}
 	
 	board[y][x] = EMPTY;
+	// printf("score: %f\n", score);
 
 	return score;
 }
@@ -834,13 +835,10 @@ compare_scores(const void *a, const void *b) {
 
 void 
 getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int candidateCount, int player) {
-	printf("player: %d\n", player);
-	printf("player_color: %d\n", player_color);
 	double curr_score;
 	put_score_t scores[19 * 19], scores2[19 * 19];
 	int opponent = (player == 1) ? 2 : 1;
 	int count = 0, count2 = 0;
-	printf("getNextPosition\n");
 
 	for (int i = 0; i < N; i++) {
     	nextPositionCandidate[i].put.p1.x = -1;
@@ -853,7 +851,7 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
 	if (candidateCount == 1) { // one stone is fixed
 		double first_score = getBoardScore(nextPosition.p1.x, nextPosition.p1.y, player);
 		board[nextPosition.p1.y][nextPosition.p1.x] = player;
-		
+
 		for (int i=0; i<19; i++) {
 			for (int j=0; j<19; j++) {
 				if (board[i][j] != EMPTY) {
@@ -871,27 +869,26 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
 
         for (int i = 0; i < N && i < count; i++) {
             nextPositionCandidate[i] = scores[i];
-			printf("nextPositionCandidate: %d : %d\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y);
+			printf("nextPositionCandidate: %d : %d / %d : %d -> %f\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y, nextPositionCandidate[i].put.p2.x, nextPositionCandidate[i].put.p2.y, nextPositionCandidate[i].score);
         }
 	}
 	else { // no stone is fixed.
 		double first_score;
 		for (int i=0; i<19; i++) {
 			for (int j=0; j<19; j++) {
-				printf("%d",board[i][j]);
 				if (board[i][j] != EMPTY) {
 					continue;
 				}
 				else {
 					first_score = getBoardScore(j, i, player);
-					scores[count++] = (put_score_t){{{j, i}, {j, i}}, curr_score};
+					scores[count++] = (put_score_t){{{j, i}, {j, i}}, first_score};
 				}
 			}
 		}
 		
 		qsort(scores, count, sizeof(put_score_t), compare_scores);
 		for(int m = 0; m < count; m++) {
-			printf("scores: %d : %d : %f\n", scores[m].put.p1.x, scores[m].put.p1.y, scores[m].score);
+			// printf("scores: %d : %d : %f\n", scores[m].put.p1.x, scores[m].put.p1.y, scores[m].score);
 		}
         for (int i = 0; i < N && i < count; i++) {
             nextPositionCandidate[i] = scores[i];
@@ -1000,6 +997,7 @@ decideNextStone(put_t prevPosition, put_t oppsPosition, int player, int currDept
 	}
 	else {
 		blockConnect6(oppsPosition, &nextPosition);
+		printf("nextPosition: %d : %d / %d : %d \n", nextPosition.p1.x, nextPosition.p1.y, nextPosition.p2.x, nextPosition.p2.y);
 
 		if(nextPosition.p1.x != -1 && nextPosition.p2.x != -1){
 			nextPositionScore.put = nextPosition;
@@ -1043,7 +1041,6 @@ decideNextStone(put_t prevPosition, put_t oppsPosition, int player, int currDept
 				nextPositionScore.put = nextPositionCandidate[i].put;
 			}
 		}
-
 		board[nextPositionCandidate[i].put.p1.y][nextPositionCandidate[i].put.p1.x] = EMPTY;
 		board[nextPositionCandidate[i].put.p2.y][nextPositionCandidate[i].put.p2.x] = EMPTY;
 	}
