@@ -892,7 +892,7 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
 		}
         for (int i = 0; i < N && i < count; i++) {
             nextPositionCandidate[i] = scores[i];
-			printf("nextPositionCandidate: %d : %d : %f\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y, nextPositionCandidate[i].score);
+			printf("nextPositionCandidate: %d : %d / %d : %d -> %f\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y, nextPositionCandidate[i].put.p2.x, nextPositionCandidate[i].put.p2.y, nextPositionCandidate[i].score);
         }
 		printf("===\n");
 		// 2번째 
@@ -910,7 +910,7 @@ getNextPosition(put_t nextPosition, put_score_t * nextPositionCandidate, int can
 
         for (int i = 0; i < N && i < count2; i++) {
             nextPositionCandidate[i] = scores2[i];
-			printf("nextPositionCandidate: %d : %d\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y);
+			printf("nextPositionCandidate: %d : %d / %d : %d -> %f\n", nextPositionCandidate[i].put.p1.x, nextPositionCandidate[i].put.p1.y, nextPositionCandidate[i].put.p2.x, nextPositionCandidate[i].put.p2.y, nextPositionCandidate[i].score);
         }
 	}
 
