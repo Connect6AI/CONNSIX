@@ -27,8 +27,8 @@ static status_t player_color ;
 static status_t opponent_color ;
 static position_t prevPosision[2];
 static int first_turn ;
-static int maxDepth = 4;
-int N = 15;
+static int maxDepth = 5;
+int N = 10;
 
 typedef enum _errcode {
 	BADCOORD,
@@ -747,8 +747,11 @@ blockConnect6(put_t oppsPosition, put_t * nextPosition)
 double
 getBoardScore(int x, int y, int player) 
 {
-	double PlayerFactor[6] = { 0.0, 1.0, 3.96, 12.05, 0.0, 0.0 }; 
-	double OpponentFactor[6] = { 0.0, 1.33, 6.79, 19.52, 0.0, 0.0 }; 
+	// double AttackWeight[6] = { 0.0, 1.0, 3.96, 12.05, 0.0, 0.0 }; 
+	// double BlockWeight[6] = { 0.0, 1.33, 6.79, 19.52, 0.0, 0.0 }; 
+
+	double AttackWeight[6] = { 0.5, 1.0, 5.0, 15.0, 20.0, 30.0 }; 
+	double BlockWeight[6] = { 0.5, 3.0, 9.0, 24.0, 25.0, 30.0 }; 
 
 	position_t dir[4] = {{0,1}, {1,1}, {1,0}, {1,-1}};
 	position_t position[4][11];
@@ -796,13 +799,13 @@ getBoardScore(int x, int y, int player)
 			}
 
 			if (player_stone >= 4 && check == 0) {
-				score += 10000;
+				score += 9999;
 			}
 			else if (opponent_stone == 0) {
-				score += PlayerFactor[player_stone];
+				score += AttackWeight[player_stone];
 			}
 			else if (player_stone == 1) {
-				score += OpponentFactor[opponent_stone];
+				score += BlockWeight[opponent_stone];
 			}
 		}
 	}
