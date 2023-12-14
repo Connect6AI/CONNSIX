@@ -342,7 +342,7 @@ canConnect6(put_t prevPosition, put_t * nextPosition)
 		
 		for(int j=0; j<4; j++){
 			for(int k=-5; k<=5; k++){
-				if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
+				if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18 || x-(dir[j].x)*k < 0 || y-(dir[j].y)*k < 0){
 					window[j][k+5] = -1;
 				}
 				else{
@@ -423,7 +423,7 @@ checkNo6(position_t candidate) {
 	
 	for(int j=0; j<4; j++){
 		for(int k=-5; k<=5; k++){
-			if (x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
+			if (x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18 || x-(dir[j].x)*k < 0 || y-(dir[j].y) < 0){
 				window[j][k+5] = -1;
 			}
 			else {
@@ -653,7 +653,7 @@ blockConnect6(put_t oppsPosition, put_t * nextPosition)
 
 		for(int j=0; j<4; j++){
 			for(int k=-5; k<=5; k++){
-				if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18){
+				if(x-(dir[j].x)*k > 18 || y-(dir[j].y)*k > 18 || x-(dir[j].x)*k < 0 || y-(dir[j].y)*k < 0){
 					window[j][k+5] = -1;
 				}
 				else{
@@ -747,8 +747,6 @@ blockConnect6(put_t oppsPosition, put_t * nextPosition)
 double
 getBoardScore(int x, int y, int player) 
 {
-	// double AttackWeight[6] = { 0.0, 1.0, 3.96, 12.05, 0.0, 0.0 }; 
-	// double BlockWeight[6] = { 0.0, 1.33, 6.79, 19.52, 0.0, 0.0 }; 
 
 	double AttackWeight[6] = { 0.5, 1.0, 5.0, 15.0, 20.0, 30.0 }; 
 	double BlockWeight[6] = { 0.5, 3.0, 9.0, 24.0, 25.0, 30.0 }; 
@@ -765,7 +763,7 @@ getBoardScore(int x, int y, int player)
 	
 	for (int i = 0; i < 4; i++) {
 		for (int k=-5; k<=5; k++) {
-			if (x-(dir[i].x)*k > 18 || y-(dir[i].y)*k > 18 || x-(dir[i].x)*k < 0 || y-(dir[i].y)*k <0) {
+			if (x-(dir[i].x)*k > 18 || y-(dir[i].y)*k > 18 || x-(dir[i].x)*k < 0 || y-(dir[i].y)*k < 0) {
 				window[i][k+5] = -1;
 			}
 			else {
